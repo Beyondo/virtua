@@ -84,9 +84,22 @@
     scroller.$dispose();
   });
 
+  let prevLastKey: string | number | undefined =
+    data.length && getKey(data[data.length - 1]!, data.length - 1);
+
   $effect.pre(() => {
-    if (data.length !== store.$getItemsLength()) {
-      store.$update(ACTION_ITEMS_LENGTH_CHANGE, [data.length, shift]);
+    const len = store.$getItemsLength();
+    if (data.length !== len) {
+      const lastKey =
+        data.length && getKey(data[data.length - 1]!, data.length - 1);
+      store.$update(
+        ACTION_ITEMS_LENGTH_CHANGE,
+        [data.length, shift && lastKey === prevLastKey]
+      );
+      prevLastKey = lastKey;
+    } else {
+      prevLastKey =
+        data.length && getKey(data[data.length - 1]!, data.length - 1);
     }
   });
 
