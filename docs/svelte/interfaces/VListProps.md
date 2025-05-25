@@ -20,6 +20,16 @@ Props of [VList](../type-aliases/VList.md).
 
 ## Properties
 
+### reverse?
+
+> `optional` **reverse**: `boolean`
+
+Defined in: [src/svelte/VList.type.ts:21](https://github.com/inokawa/virtua/blob/9beb70eb109c037ab86ea839e5f119e979768d35/src/svelte/VList.type.ts#L21)
+
+If true, items are aligned to the end of the list when total size of items are smaller than viewport size. It's useful for chat like app.
+
+***
+
 ### children
 
 > **children**: `Snippet`\<\[`T`, `number`\]\>
