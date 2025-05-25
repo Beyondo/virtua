@@ -13,7 +13,6 @@ export interface VListProps<T>
       | "itemSize"
       | "shift"
       | "horizontal"
-      | "reverse"
       | "children"
       | "onscroll"
       | "onscrollend"
