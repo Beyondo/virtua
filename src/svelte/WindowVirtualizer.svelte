@@ -77,10 +77,39 @@
     scroller.$dispose();
   });
 
+  let prevKeys: unknown[] = data.map((d, i) => getKey(d, i));
+
   $effect.pre(() => {
-    if (data.length !== store.$getItemsLength()) {
-      store.$update(ACTION_ITEMS_LENGTH_CHANGE, [data.length, shift]);
+    const len = data.length;
+    const prevLen = prevKeys.length;
+    if (len !== prevLen) {
+      let shouldShift = shift;
+      if (shift) {
+        const diff = len - prevLen;
+        if (diff > 0) {
+          let ok = true;
+          for (let i = diff; i < len; i++) {
+            if (getKey(data[i]!, i) !== prevKeys[i - diff]) {
+              ok = false;
+              break;
+            }
+          }
+          shouldShift = ok;
+        } else {
+          const offset = -diff;
+          let ok = true;
+          for (let i = 0; i < len; i++) {
+            if (getKey(data[i]!, i) !== prevKeys[i + offset]) {
+              ok = false;
+              break;
+            }
+          }
+          shouldShift = ok;
+        }
+      }
+      store.$update(ACTION_ITEMS_LENGTH_CHANGE, [len, shouldShift]);
     }
+    prevKeys = data.map((d, i) => getKey(d, i));
   });
 
   let prevStateVersion: StateVersion | undefined;
