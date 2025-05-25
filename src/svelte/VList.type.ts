@@ -17,7 +17,12 @@ export interface VListProps<T>
       | "onscroll"
       | "onscrollend"
     >,
-    ViewportComponentAttributes {}
+    ViewportComponentAttributes {
+  /**
+   * If true, items are aligned to the end of the list when total size of items are smaller than viewport size. It's useful for chat like app.
+   */
+  reverse?: boolean;
+}
 
 /**
  * Methods of {@link VList}.
