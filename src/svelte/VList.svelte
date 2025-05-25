@@ -11,6 +11,7 @@
     overscan,
     itemSize,
     shift,
+    reverse = false,
     horizontal,
     children,
     onscroll,
@@ -58,23 +59,53 @@
     width: "100%",
     height: "100%",
   });
+
+  const reverseWrapperStyle = styleToString({
+    visibility: "hidden",
+    display: "flex",
+    "flex-direction": "column",
+    "justify-content": "flex-end",
+    "min-height": "100%",
+  });
+
+  const shouldReverse = reverse && !horizontal;
+
+  let scrollRef: HTMLDivElement | undefined = $state();
 </script>
 
 <!-- 
   @component
   Virtualized list component. See {@link VListProps} and {@link VListHandle}.
 -->
-<div {...rest} style="{viewportStyle} {rest.style || ''}">
-  <Virtualizer
-    bind:this={ref}
-    {data}
-    {children}
-    {getKey}
-    {overscan}
-    {itemSize}
-    {shift}
-    {horizontal}
-    {onscroll}
-    {onscrollend}
-  />
+<div bind:this={scrollRef} {...rest} style="{viewportStyle} {rest.style || ''}">
+  {#if shouldReverse}
+    <div style={reverseWrapperStyle}>
+      <Virtualizer
+        bind:this={ref}
+        {data}
+        {children}
+        {getKey}
+        {overscan}
+        {itemSize}
+        {shift}
+        {horizontal}
+        scrollRef={scrollRef}
+        {onscroll}
+        {onscrollend}
+      />
+    </div>
+  {:else}
+    <Virtualizer
+      bind:this={ref}
+      {data}
+      {children}
+      {getKey}
+      {overscan}
+      {itemSize}
+      {shift}
+      {horizontal}
+      {onscroll}
+      {onscrollend}
+    />
+  {/if}
 </div>
