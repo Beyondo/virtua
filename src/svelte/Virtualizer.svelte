@@ -84,23 +84,38 @@
     scroller.$dispose();
   });
 
-  let prevLastKey: string | number | undefined =
-    data.length && getKey(data[data.length - 1]!, data.length - 1);
-
+  let prevKeys: unknown[] = data.map((d, i) => getKey(d, i));
   $effect.pre(() => {
-    const len = store.$getItemsLength();
-    if (data.length !== len) {
-      const lastKey =
-        data.length && getKey(data[data.length - 1]!, data.length - 1);
-      store.$update(
-        ACTION_ITEMS_LENGTH_CHANGE,
-        [data.length, shift && lastKey === prevLastKey]
-      );
-      prevLastKey = lastKey;
-    } else {
-      prevLastKey =
-        data.length && getKey(data[data.length - 1]!, data.length - 1);
+    const len = data.length;
+    const prevLen = prevKeys.length;
+    if (len !== prevLen) {
+      let shouldShift = shift;
+      if (shift) {
+        const diff = len - prevLen;
+        if (diff > 0) {
+          let ok = true;
+          for (let i = diff; i < len; i++) {
+            if (getKey(data[i]!, i) !== prevKeys[i - diff]) {
+              ok = false;
+              break;
+            }
+          }
+          shouldShift = ok;
+        } else {
+          const offset = -diff;
+          let ok = true;
+          for (let i = 0; i < len; i++) {
+            if (getKey(data[i]!, i) !== prevKeys[i + offset]) {
+              ok = false;
+              break;
+            }
+          }
+          shouldShift = ok;
+        }
+      }
+      store.$update(ACTION_ITEMS_LENGTH_CHANGE, [len, shouldShift]);
     }
+    prevKeys = data.map((d, i) => getKey(d, i));
   });
 
   $effect.pre(() => {
